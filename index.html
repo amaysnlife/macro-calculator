@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AMAYSN Macro Calculator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 2em;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 2em;
+      border-radius: 8px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #222;
+    }
+    label {
+      display: block;
+      margin-top: 1em;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.5em;
+      margin-top: 0.3em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      margin-top: 1.5em;
+      width: 100%;
+      padding: 0.7em;
+      background-color: #000;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #333;
+    }
+    .results {
+      margin-top: 2em;
+      padding: 1em;
+      background-color: #e7f4e4;
+      border-left: 5px solid #2a7b2a;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>AMAYSN Macro Calculator</h2>
+    <label>Age:
+      <input type="number" id="age" placeholder="e.g., 35" required>
+    </label>
+    <label>Weight (lbs):
+      <input type="number" id="weight" placeholder="e.g., 180" required>
+    </label>
+    <label>Height (inches):
+      <input type="number" id="height" placeholder="e.g., 70" required>
+    </label>
+    <label>Hormonal Profile:
+      <select id="gender">
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+    </label>
+    <label>Activity Level:
+      <select id="activity">
+        <option value="1.2">Sedentary</option>
+        <option value="1.375">Lightly Active</option>
+        <option value="1.55">Moderately Active</option>
+        <option value="1.725">Very Active</option>
+        <option value="1.9">Extra Active</option>
+      </select>
+    </label>
+    <label>Goal:
+      <select id="goal">
+        <option value="deficit">Fat Loss</option>
+        <option value="maintain">Maintenance</option>
+        <option value="surplus">Muscle Gain</option>
+      </select>
+    </label>
+    <label>Breastfeeding?
+      <select id="breastfeeding">
+        <option value="0">No</option>
+        <option value="300">Yes – Partial (add 300 cal)</option>
+        <option value="500">Yes – Exclusive (add 500 cal)</option>
+      </select>
+    </label>
+    <button onclick="calculate()">Calculate My Macros</button>
+    <div class="results" id="results" style="display:none;"></div>
+  </div>
+
+  <script>
+    function calculate() {
+      const age = parseInt(document.getElementById('age').value);
+      const weight = parseFloat(document.getElementById('weight').value);
+      const height = parseFloat(document.getElementById('height').value);
+      const gender = document.getElementById('gender').value;
+      const activity = parseFloat(document.getElementById('activity').value);
+      const goal = document.getElementById('goal').value;
+      const bfExtra = parseInt(document.getElementById('breastfeeding').value);
+
+      if (!age || !weight || !height) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      let bmr;
+      if (gender === 'male') {
+        bmr = 66 + (6.23 * weight) + (12.7 * height) - (6.8 * age);
+      } else {
+        bmr = 655 + (4.35 * weight) + (4.7 * height) - (4.7 * age);
+      }
+
+      let tdee = bmr * activity + bfExtra;
+
+      if (goal === 'deficit') tdee -= 500;
+      if (goal === 'surplus') tdee += 500;
+
+      const protein = weight * 1.0;  // 1g per lb
+      const fat = (tdee * 0.25) / 9;
+      const carbs = (tdee - (protein * 4 + fat * 9)) / 4;
+
+      const output = `
+        <strong>Estimated Daily Calories:</strong> ${Math.round(tdee)} kcal/day<br>
+        <strong>Macronutrient Breakdown:</strong><br>
+        • Protein: ${Math.round(protein)}g (1g per pound of body weight)<br>
+        • Fat: ${Math.round(fat)}g (25% of calories)<br>
+        • Carbs: ${Math.round(carbs)}g (remaining calories)<br><br>
+        <em>This estimate is based on guidance from the NIH, WHO, Harvard Health, and the Institute of Medicine.<br>
+        Always consult a medical professional when planning dietary changes.</em>
+      `;
+
+      const resultDiv = document.getElementById("results");
+      resultDiv.innerHTML = output;
+      resultDiv.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
