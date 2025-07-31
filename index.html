@@ -1,146 +1,156 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>AMAYSN Macro Calculator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 30px;
-            max-width: 700px;
-            margin: auto;
-            background-color: #f8f8f8;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        label {
-            display: block;
-            margin: 10px 0 5px;
-        }
-        select, input[type="number"] {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            background-color: #000;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            width: 100%;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        #results {
-            background-color: #e0ffe0;
-            padding: 20px;
-            margin-top: 20px;
-            border-radius: 8px;
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AMAYSN Macro Calculator V3.0</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    h1, h2 {
+      color: #1a1a1a;
+    }
+    input, select {
+      margin-bottom: 10px;
+      padding: 8px;
+      width: 100%;
+      max-width: 300px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #008060;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #00684a;
+    }
+    .result {
+      background-color: #fff;
+      padding: 15px;
+      margin-top: 20px;
+      border: 1px solid #ccc;
+    }
+    .warning {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-    <h1>AMAYSN Macro Calculator</h1>
-    <label>Age:</label>
-    <input type="number" id="age" min="10" max="100" value="30">
-    
-    <label>Weight (lbs):</label>
-    <input type="number" id="weight" min="50" max="500" value="160">
+  <h1>AMAYSN Macro Calculator</h1>
+  <p>Powered by the Bodybuilding.com formula with scientific modifiers and safety warnings.</p>
 
-    <label>Height (inches):</label>
-    <input type="number" id="height" min="48" max="84" value="68">
+  <div id="calculator">
+    <label for="age">Age:</label><br />
+    <input type="number" id="age" min="10" max="100"/><br />
 
-    <label>Hormonal Profile:</label>
+    <label for="gender">Hormonal Profile:</label><br />
     <select id="gender">
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-    </select>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+    </select><br />
 
-    <label>Activity Level:</label>
+    <label for="height">Height (cm):</label><br />
+    <input type="number" id="height" /><br />
+
+    <label for="weight">Weight (kg):</label><br />
+    <input type="number" id="weight" /><br />
+
+    <label for="activity">Activity Level:</label><br />
     <select id="activity">
-        <option value="1.2">Sedentary</option>
-        <option value="1.375">Lightly active</option>
-        <option value="1.55">Moderately active</option>
-        <option value="1.725">Very active</option>
-        <option value="1.9">Extra active</option>
-    </select>
+      <option value="1.2">Sedentary</option>
+      <option value="1.375">Lightly Active</option>
+      <option value="1.55">Moderately Active</option>
+      <option value="1.725">Very Active</option>
+      <option value="1.9">Extra Active</option>
+    </select><br />
 
-    <label>Goal:</label>
+    <label for="goal">Goal:</label><br />
     <select id="goal">
-        <option value="maintain">Maintenance</option>
-        <option value="loss">Fat Loss</option>
-        <option value="gain">Muscle Gain</option>
-    </select>
+      <option value="loss">Fat Loss</option>
+      <option value="maintain">Maintenance</option>
+      <option value="gain">Muscle Gain</option>
+    </select><br />
 
-    <label>Pregnancy Status:</label>
+    <label for="pregnancy">Pregnancy Status:</label><br />
     <select id="pregnancy">
-        <option value="0">Not Pregnant</option>
-        <option value="85">First Trimester (+85 cal)</option>
-        <option value="285">Second Trimester (+285 cal)</option>
-        <option value="475">Third Trimester (+475 cal)</option>
-    </select>
+      <option value="none">Not Pregnant</option>
+      <option value="first">First Trimester</option>
+      <option value="second">Second Trimester</option>
+      <option value="third">Third Trimester</option>
+    </select><br />
 
-    <label>Breastfeeding:</label>
+    <label for="breastfeeding">Breastfeeding:</label><br />
     <select id="breastfeeding">
-        <option value="0">Not Breastfeeding</option>
-        <option value="300">Light (+300 cal)</option>
-        <option value="450">Moderate (+450 cal)</option>
-        <option value="500">Heavy (+500 cal)</option>
-    </select>
+      <option value="none">No</option>
+      <option value="low">Low Frequency</option>
+      <option value="high">High Frequency</option>
+    </select><br />
 
-    <button onclick="calculateMacros()">Calculate My Macros</button>
+    <button onclick="calculate()">Calculate</button>
 
-    <div id="results"></div>
+    <div class="result" id="result"></div>
+  </div>
 
-    <script>
-        function calculateMacros() {
-            const age = parseFloat(document.getElementById('age').value);
-            const weight = parseFloat(document.getElementById('weight').value);
-            const height = parseFloat(document.getElementById('height').value);
-            const gender = document.getElementById('gender').value;
-            const activity = parseFloat(document.getElementById('activity').value);
-            const goal = document.getElementById('goal').value;
-            const pregnancy = parseFloat(document.getElementById('pregnancy').value);
-            const breastfeeding = parseFloat(document.getElementById('breastfeeding').value);
+  <script>
+    function calculate() {
+      const age = parseInt(document.getElementById('age').value);
+      const gender = document.getElementById('gender').value;
+      const height = parseFloat(document.getElementById('height').value);
+      const weight = parseFloat(document.getElementById('weight').value);
+      const activity = parseFloat(document.getElementById('activity').value);
+      const goal = document.getElementById('goal').value;
+      const pregnancy = document.getElementById('pregnancy').value;
+      const breastfeeding = document.getElementById('breastfeeding').value;
 
-            const weightKg = weight * 0.453592;
-            const heightCm = height * 2.54;
+      let bmr = (gender === 'male') ?
+        (10 * weight + 6.25 * height - 5 * age + 5) :
+        (10 * weight + 6.25 * height - 5 * age - 161);
 
-            let bmr = gender === "male"
-                ? 10 * weightKg + 6.25 * heightCm - 5 * age + 5
-                : 10 * weightKg + 6.25 * heightCm - 5 * age - 161;
+      let calories = bmr * activity;
 
-            let calories = bmr * activity;
+      if (goal === 'loss') calories *= 0.8;
+      if (goal === 'gain') calories += 500;
 
-            if (goal === "loss") {
-                calories *= 0.8; // 20% reduction
-            } else if (goal === "gain") {
-                calories += 500;
-            }
+      if (pregnancy === 'first') calories += 85;
+      if (pregnancy === 'second') calories += 285;
+      if (pregnancy === 'third') calories += 475;
+      if (breastfeeding === 'low') calories += 330;
+      if (breastfeeding === 'high') calories += 500;
 
-            calories += pregnancy + breastfeeding;
+      let proteinPerc = (goal === 'loss') ? 0.4 : 0.3;
+      let carbPerc = (goal === 'loss') ? 0.4 : 0.4;
+      let fatPerc = 1 - proteinPerc - carbPerc;
 
-            let ratio = goal === "loss" ? [0.4, 0.4, 0.2] : [0.4, 0.3, 0.3];
+      const protein = (calories * proteinPerc) / 4;
+      const carbs = (calories * carbPerc) / 4;
+      const fat = (calories * fatPerc) / 9;
 
-            let protein = calories * ratio[1] / 4;
-            let fat = calories * ratio[2] / 9;
-            let carbs = calories * ratio[0] / 4;
+      let warning = '';
+      if (age < 18) warning = '⚠️ Teens under 18 should consult a doctor before starting a macro-based diet.';
+      if (age > 70) warning = '⚠️ Adults over 70 should avoid extreme diets like keto unless supervised by a physician.';
+      if (pregnancy !== 'none' && goal === 'loss') warning += '<br>⚠️ Pregnant people should avoid weight loss programs. Consult your OB-GYN.';
+      if (pregnancy !== 'none' && goal === 'gain' && fatPerc > 0.3) warning += '<br>⚠️ High-fat diets are not always safe during pregnancy. Use caution.';
 
-            document.getElementById('results').style.display = 'block';
-            document.getElementById('results').innerHTML = `
-                <strong>Estimated Daily Calories:</strong> ${Math.round(calories)} kcal/day<br><br>
-                <strong>Macronutrient Breakdown:</strong><br>
-                • Protein: ${Math.round(protein)}g<br>
-                • Fat: ${Math.round(fat)}g<br>
-                • Carbs: ${Math.round(carbs)}g<br>
-            `;
-        }
-    </script>
+      document.getElementById('result').innerHTML = `
+        <h2>Your Daily Macro Targets</h2>
+        <p>Calories: <strong>${calories.toFixed(0)}</strong></p>
+        <p>Protein: <strong>${protein.toFixed(0)}g</strong></p>
+        <p>Carbs: <strong>${carbs.toFixed(0)}g</strong></p>
+        <p>Fat: <strong>${fat.toFixed(0)}g</strong></p>
+        ${warning ? `<p class="warning">${warning}</p>` : ''}
+      `;
+    }
+  </script>
 </body>
 </html>
