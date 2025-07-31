@@ -1,135 +1,151 @@
+# Re-run the macro calculator generator with updated HTML including pregnancy and breastfeeding modifiers
+from IPython.display import display, HTML
+
+calculator_html = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AMAYSN Macro Calculator</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
-      color: #222;
-      margin: 0;
-      padding: 2rem;
-    }
-    .container {
-      max-width: 500px;
-      background: white;
-      padding: 2rem;
-      margin: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      border-radius: 8px;
-    }
-    input, select, button {
-      width: 100%;
-      padding: 0.6rem;
-      margin-bottom: 1rem;
-      font-size: 1rem;
-    }
-    button {
-      background-color: black;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    .output {
-      background: #e9f5e9;
-      padding: 1rem;
-      border-radius: 6px;
-      margin-top: 1rem;
-    }
-    .output strong {
-      display: block;
-      margin-top: 0.5rem;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>AMAYSN Macro Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            max-width: 700px;
+            margin: auto;
+            background-color: #f8f8f8;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        select, input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #000;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #results {
+            background-color: #e0ffe0;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h2>AMAYSN Macro Calculator</h2>
+    <h1>AMAYSN Macro Calculator</h1>
     <label>Age:</label>
-    <input type="number" id="age" />
-
+    <input type="number" id="age" min="10" max="100" value="30">
+    
     <label>Weight (lbs):</label>
-    <input type="number" id="weight" />
+    <input type="number" id="weight" min="50" max="500" value="160">
 
     <label>Height (inches):</label>
-    <input type="number" id="height" />
+    <input type="number" id="height" min="48" max="84" value="68">
 
     <label>Hormonal Profile:</label>
     <select id="gender">
-      <option value="male">Male</option>
-      <option value="female">Female</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
     </select>
 
     <label>Activity Level:</label>
     <select id="activity">
-      <option value="1.2">Sedentary</option>
-      <option value="1.375">Lightly Active</option>
-      <option value="1.55">Moderately Active</option>
-      <option value="1.725">Very Active</option>
-      <option value="1.9">Extra Active</option>
+        <option value="1.2">Sedentary</option>
+        <option value="1.375">Lightly active</option>
+        <option value="1.55">Moderately active</option>
+        <option value="1.725">Very active</option>
+        <option value="1.9">Extra active</option>
     </select>
 
     <label>Goal:</label>
     <select id="goal">
-      <option value="maintain">Maintain Weight</option>
-      <option value="loss">Weight Loss</option>
-      <option value="gain">Muscle Gain</option>
+        <option value="maintain">Maintenance</option>
+        <option value="loss">Fat Loss</option>
+        <option value="gain">Muscle Gain</option>
+    </select>
+
+    <label>Pregnancy Status:</label>
+    <select id="pregnancy">
+        <option value="0">Not Pregnant</option>
+        <option value="85">First Trimester (+85 cal)</option>
+        <option value="285">Second Trimester (+285 cal)</option>
+        <option value="475">Third Trimester (+475 cal)</option>
+    </select>
+
+    <label>Breastfeeding:</label>
+    <select id="breastfeeding">
+        <option value="0">Not Breastfeeding</option>
+        <option value="300">Light (+300 cal)</option>
+        <option value="450">Moderate (+450 cal)</option>
+        <option value="500">Heavy (+500 cal)</option>
     </select>
 
     <button onclick="calculateMacros()">Calculate My Macros</button>
 
-    <div class="output" id="result" style="display: none;"></div>
-  </div>
+    <div id="results"></div>
 
-  <script>
-    function calculateMacros() {
-      const age = parseInt(document.getElementById('age').value);
-      const weight = parseFloat(document.getElementById('weight').value);
-      const height = parseFloat(document.getElementById('height').value);
-      const gender = document.getElementById('gender').value;
-      const activity = parseFloat(document.getElementById('activity').value);
-      const goal = document.getElementById('goal').value;
+    <script>
+        function calculateMacros() {
+            const age = parseFloat(document.getElementById('age').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const gender = document.getElementById('gender').value;
+            const activity = parseFloat(document.getElementById('activity').value);
+            const goal = document.getElementById('goal').value;
+            const pregnancy = parseFloat(document.getElementById('pregnancy').value);
+            const breastfeeding = parseFloat(document.getElementById('breastfeeding').value);
 
-      const weightKg = weight * 0.453592;
-      const heightCm = height * 2.54;
+            const weightKg = weight * 0.453592;
+            const heightCm = height * 2.54;
 
-      let bmr;
-      if (gender === 'male') {
-        bmr = 10 * weightKg + 6.25 * heightCm - 5 * age + 5;
-      } else {
-        bmr = 10 * weightKg + 6.25 * heightCm - 5 * age - 161;
-      }
+            let bmr = gender === "male"
+                ? 10 * weightKg + 6.25 * heightCm - 5 * age + 5
+                : 10 * weightKg + 6.25 * heightCm - 5 * age - 161;
 
-      let tdee = bmr * activity;
+            let calories = bmr * activity;
 
-      if (goal === 'loss') {
-        tdee = tdee * 0.85; // ~15% deficit
-      } else if (goal === 'gain') {
-        tdee = tdee + 500; // surplus
-      }
+            if (goal === "loss") {
+                calories *= 0.8; // 20% reduction
+            } else if (goal === "gain") {
+                calories += 500;
+            }
 
-      let proteinPct = 0.30, carbPct = 0.40, fatPct = 0.30;
-      if (goal === 'loss') {
-        proteinPct = 0.40;
-        carbPct = 0.40;
-        fatPct = 0.20;
-      }
+            calories += pregnancy + breastfeeding;
 
-      const proteinGrams = (tdee * proteinPct) / 4;
-      const carbsGrams = (tdee * carbPct) / 4;
-      const fatGrams = (tdee * fatPct) / 9;
+            let ratio = goal === "loss" ? [0.4, 0.4, 0.2] : [0.4, 0.3, 0.3];
 
-      document.getElementById('result').style.display = 'block';
-      document.getElementById('result').innerHTML = `
-        <strong>Estimated Daily Calories:</strong> ${Math.round(tdee)} kcal/day
-        <strong>Macronutrient Breakdown:</strong>
-        • Protein: ${Math.round(proteinGrams)}g<br>
-        • Carbs: ${Math.round(carbsGrams)}g<br>
-        • Fat: ${Math.round(fatGrams)}g
-      `;
-    }
-  </script>
+            let protein = calories * ratio[1] / 4;
+            let fat = calories * ratio[2] / 9;
+            let carbs = calories * ratio[0] / 4;
+
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('results').innerHTML = `
+                <strong>Estimated Daily Calories:</strong> ${Math.round(calories)} kcal/day<br><br>
+                <strong>Macronutrient Breakdown:</strong><br>
+                • Protein: ${Math.round(protein)}g<br>
+                • Fat: ${Math.round(fat)}g<br>
+                • Carbs: ${Math.round(carbs)}g<br>
+            `;
+        }
+    </script>
 </body>
 </html>
+"""
