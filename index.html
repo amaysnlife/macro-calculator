@@ -4,151 +4,183 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AMAYSN Macro Calculator V3.0</title>
+  <title>AMAYSN Macro Calculator</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f9f9f9;
-      color: #333;
-      margin: 0;
-      padding: 20px;
-    }
-    h1, h2 {
-      color: #1a1a1a;
-    }
-    input, select {
-      margin-bottom: 10px;
-      padding: 8px;
+    body { font-family: sans-serif; padding: 20px; background: #f8f8f8; color: #333; }
+    h1 { color: #00695c; }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    select, input[type="number"], input[type="text"], input[type="radio"] {
+      margin-top: 5px;
+      padding: 5px;
       width: 100%;
       max-width: 300px;
-      font-size: 16px;
     }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #008060;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #00684a;
-    }
-    .result {
-      background-color: #fff;
-      padding: 15px;
-      margin-top: 20px;
-      border: 1px solid #ccc;
-    }
-    .warning {
-      color: red;
-      font-weight: bold;
-    }
+    .hidden { display: none; }
+    .output { margin-top: 20px; padding: 10px; background: #e0f2f1; border: 1px solid #b2dfdb; }
+    .warning { color: red; margin-top: 10px; }
   </style>
 </head>
 <body>
   <h1>AMAYSN Macro Calculator</h1>
-  <p>Powered by the Bodybuilding.com formula with scientific modifiers and safety warnings.</p>
 
-  <div id="calculator">
-    <label for="age">Age:</label><br />
-    <input type="number" id="age" min="10" max="100"/><br />
+  <label for="units">Units</label>
+  <select id="units" onchange="toggleUnits()">
+    <option value="imperial">Imperial (lbs, ft/in)</option>
+    <option value="metric">Metric (kg, cm)</option>
+  </select>
 
-    <label for="gender">Hormonal Profile:</label><br />
-    <select id="gender">
-      <option value="male">Male</option>
-      <option value="female">Female</option>
-    </select><br />
+  <label for="age">Age</label>
+  <input type="number" id="age" min="10" max="100" />
 
-    <label for="height">Height (cm):</label><br />
-    <input type="number" id="height" /><br />
+  <label for="gender">Gender (hormonal profile)</label>
+  <select id="gender">
+    <option value="male">Male</option>
+    <option value="female">Female</option>
+  </select>
 
-    <label for="weight">Weight (kg):</label><br />
-    <input type="number" id="weight" /><br />
-
-    <label for="activity">Activity Level:</label><br />
-    <select id="activity">
-      <option value="1.2">Sedentary</option>
-      <option value="1.375">Lightly Active</option>
-      <option value="1.55">Moderately Active</option>
-      <option value="1.725">Very Active</option>
-      <option value="1.9">Extra Active</option>
-    </select><br />
-
-    <label for="goal">Goal:</label><br />
-    <select id="goal">
-      <option value="loss">Fat Loss</option>
-      <option value="maintain">Maintenance</option>
-      <option value="gain">Muscle Gain</option>
-    </select><br />
-
-    <label for="pregnancy">Pregnancy Status:</label><br />
-    <select id="pregnancy">
-      <option value="none">Not Pregnant</option>
-      <option value="first">First Trimester</option>
-      <option value="second">Second Trimester</option>
-      <option value="third">Third Trimester</option>
-    </select><br />
-
-    <label for="breastfeeding">Breastfeeding:</label><br />
-    <select id="breastfeeding">
-      <option value="none">No</option>
-      <option value="low">Low Frequency</option>
-      <option value="high">High Frequency</option>
-    </select><br />
-
-    <button onclick="calculate()">Calculate</button>
-
-    <div class="result" id="result"></div>
+  <div id="imperialInputs">
+    <label for="heightFt">Height (feet)</label>
+    <input type="number" id="heightFt" min="1" />
+    <label for="heightIn">Height (inches)</label>
+    <input type="number" id="heightIn" min="0" />
+    <label for="weightLbs">Weight (lbs)</label>
+    <input type="number" id="weightLbs" min="1" />
   </div>
 
+  <div id="metricInputs" class="hidden">
+    <label for="heightCm">Height (cm)</label>
+    <input type="number" id="heightCm" min="50" />
+    <label for="weightKg">Weight (kg)</label>
+    <input type="number" id="weightKg" min="30" />
+  </div>
+
+  <label for="activity">Activity Level</label>
+  <select id="activity">
+    <option value="1.2">Sedentary</option>
+    <option value="1.375">Lightly active</option>
+    <option value="1.55">Moderately active</option>
+    <option value="1.725">Very active</option>
+    <option value="1.9">Extra active</option>
+  </select>
+
+  <label for="goal">Goal</label>
+  <select id="goal">
+    <option value="loss">Weight Loss</option>
+    <option value="maintain">Maintenance</option>
+    <option value="gain">Muscle Gain</option>
+  </select>
+
+  <label>
+    <input type="checkbox" id="pregnantToggle" onchange="togglePregnancy()"> Pregnant?
+  </label>
+  <div id="pregnancySection" class="hidden">
+    <label for="trimester">Trimester</label>
+    <select id="trimester">
+      <option value="1">First</option>
+      <option value="2">Second</option>
+      <option value="3">Third</option>
+    </select>
+  </div>
+
+  <label>
+    <input type="checkbox" id="breastfeedingToggle" onchange="toggleBreastfeeding()"> Breastfeeding?
+  </label>
+  <div id="breastfeedingSection" class="hidden">
+    <label for="breastfeedingAmount">Frequency</label>
+    <select id="breastfeedingAmount">
+      <option value="0">None</option>
+      <option value="1">Partial</option>
+      <option value="2">Exclusive</option>
+    </select>
+  </div>
+
+  <button onclick="calculate()">Calculate Macros</button>
+
+  <div class="output" id="results"></div>
+
   <script>
+    function toggleUnits() {
+      const metric = document.getElementById("metricInputs");
+      const imperial = document.getElementById("imperialInputs");
+      if (document.getElementById("units").value === "metric") {
+        metric.classList.remove("hidden");
+        imperial.classList.add("hidden");
+      } else {
+        metric.classList.add("hidden");
+        imperial.classList.remove("hidden");
+      }
+    }
+
+    function togglePregnancy() {
+      const toggle = document.getElementById("pregnantToggle").checked;
+      document.getElementById("pregnancySection").classList.toggle("hidden", !toggle);
+    }
+
+    function toggleBreastfeeding() {
+      const toggle = document.getElementById("breastfeedingToggle").checked;
+      document.getElementById("breastfeedingSection").classList.toggle("hidden", !toggle);
+    }
+
     function calculate() {
-      const age = parseInt(document.getElementById('age').value);
-      const gender = document.getElementById('gender').value;
-      const height = parseFloat(document.getElementById('height').value);
-      const weight = parseFloat(document.getElementById('weight').value);
-      const activity = parseFloat(document.getElementById('activity').value);
-      const goal = document.getElementById('goal').value;
-      const pregnancy = document.getElementById('pregnancy').value;
-      const breastfeeding = document.getElementById('breastfeeding').value;
+      let age = parseInt(document.getElementById("age").value);
+      let gender = document.getElementById("gender").value;
+      let activity = parseFloat(document.getElementById("activity").value);
+      let goal = document.getElementById("goal").value;
+      let isMetric = document.getElementById("units").value === "metric";
+      let height, weight;
 
-      let bmr = (gender === 'male') ?
-        (10 * weight + 6.25 * height - 5 * age + 5) :
-        (10 * weight + 6.25 * height - 5 * age - 161);
+      if (isMetric) {
+        height = parseFloat(document.getElementById("heightCm").value);
+        weight = parseFloat(document.getElementById("weightKg").value);
+      } else {
+        let ft = parseInt(document.getElementById("heightFt").value);
+        let inch = parseInt(document.getElementById("heightIn").value);
+        height = ((ft * 12 + inch) * 2.54);
+        weight = parseFloat(document.getElementById("weightLbs").value) / 2.20462;
+      }
 
-      let calories = bmr * activity;
+      let bmr = (gender === "male")
+        ? 10 * weight + 6.25 * height - 5 * age + 5
+        : 10 * weight + 6.25 * height - 5 * age - 161;
 
-      if (goal === 'loss') calories *= 0.8;
-      if (goal === 'gain') calories += 500;
+      let cal = bmr * activity;
 
-      if (pregnancy === 'first') calories += 85;
-      if (pregnancy === 'second') calories += 285;
-      if (pregnancy === 'third') calories += 475;
-      if (breastfeeding === 'low') calories += 330;
-      if (breastfeeding === 'high') calories += 500;
+      // Pregnancy modifier
+      if (document.getElementById("pregnantToggle").checked) {
+        let trimester = document.getElementById("trimester").value;
+        if (trimester === "2") cal += 340;
+        else if (trimester === "3") cal += 450;
+      }
 
-      let proteinPerc = (goal === 'loss') ? 0.4 : 0.3;
-      let carbPerc = (goal === 'loss') ? 0.4 : 0.4;
-      let fatPerc = 1 - proteinPerc - carbPerc;
+      // Breastfeeding modifier
+      if (document.getElementById("breastfeedingToggle").checked) {
+        let freq = document.getElementById("breastfeedingAmount").value;
+        if (freq === "1") cal += 330;
+        if (freq === "2") cal += 450;
+      }
 
-      const protein = (calories * proteinPerc) / 4;
-      const carbs = (calories * carbPerc) / 4;
-      const fat = (calories * fatPerc) / 9;
+      // Goal adjustment
+      if (goal === "loss") cal *= 0.85;
+      if (goal === "gain") cal += 500;
 
-      let warning = '';
-      if (age < 18) warning = '⚠️ Teens under 18 should consult a doctor before starting a macro-based diet.';
-      if (age > 70) warning = '⚠️ Adults over 70 should avoid extreme diets like keto unless supervised by a physician.';
-      if (pregnancy !== 'none' && goal === 'loss') warning += '<br>⚠️ Pregnant people should avoid weight loss programs. Consult your OB-GYN.';
-      if (pregnancy !== 'none' && goal === 'gain' && fatPerc > 0.3) warning += '<br>⚠️ High-fat diets are not always safe during pregnancy. Use caution.';
+      // Macro Ratios
+      let ratios = goal === "loss" ? [0.4, 0.4, 0.2] : [0.4, 0.3, 0.3];
+      let carbs = Math.round((cal * ratios[0]) / 4);
+      let protein = Math.round((cal * ratios[1]) / 4);
+      let fat = Math.round((cal * ratios[2]) / 9);
 
-      document.getElementById('result').innerHTML = `
-        <h2>Your Daily Macro Targets</h2>
-        <p>Calories: <strong>${calories.toFixed(0)}</strong></p>
-        <p>Protein: <strong>${protein.toFixed(0)}g</strong></p>
-        <p>Carbs: <strong>${carbs.toFixed(0)}g</strong></p>
-        <p>Fat: <strong>${fat.toFixed(0)}g</strong></p>
-        ${warning ? `<p class="warning">${warning}</p>` : ''}
+      let warnings = "";
+      if (age < 18) warnings += "<p class='warning'>⚠️ This calculator is not intended for minors. Consult a pediatrician or dietitian for youth dietary needs.</p>";
+      if (age > 70) warnings += "<p class='warning'>⚠️ Consult your healthcare provider before beginning any nutrition plan over age 70. Source: NIH.</p>";
+      if (document.getElementById("pregnantToggle").checked) warnings += "<p class='warning'>⚠️ Pregnant individuals should consult a physician before changing diet. Source: WHO.</p>";
+
+      document.getElementById("results").innerHTML = `
+        <h3>Your Daily Targets:</h3>
+        <p><strong>Calories:</strong> ${Math.round(cal)} kcal</p>
+        <p><strong>Protein:</strong> ${protein} g</p>
+        <p><strong>Carbs:</strong> ${carbs} g</p>
+        <p><strong>Fats:</strong> ${fat} g</p>
+        ${warnings}
       `;
     }
   </script>
