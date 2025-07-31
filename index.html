@@ -171,8 +171,8 @@
 
       let warnings = "";
       if (age < 18) warnings += "<p class='warning'>⚠️ This calculator is not intended for minors. Consult a pediatrician or dietitian for youth dietary needs.</p>";
-      if (age > 70) warnings += "<p class='warning'>⚠️ Consult your healthcare provider before beginning any nutrition plan over age 70. Source: NIH.</p>";
-      if (document.getElementById("pregnantToggle").checked) warnings += "<p class='warning'>⚠️ Pregnant individuals should consult a physician before changing diet. Source: WHO.</p>";
+      if (age > 69) warnings += "<p class='warning'>⚠️ Consult your healthcare provider before beginning any nutrition plan over age 70. Source: National Institute for Health.</p>";
+      if (document.getElementById("pregnantToggle").checked) warnings += "<p class='warning'>⚠️ Pregnant individuals should consult a physician before changing diet. Source: World Health Organization.</p>";
 
       document.getElementById("results").innerHTML = `
         <h3>Your Daily Targets:</h3>
